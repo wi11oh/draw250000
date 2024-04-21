@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     canvas.addEventListener(isTouchDevice ? "touchstart" : "mousedown", (e) => {
         const { offsetX, offsetY } = sumaho_offset(e, canvas, isTouchDevice)
 
+        color = document.querySelector("#color").value
+        bolder = document.querySelector("#bolder").value
+        drawLine(offsetX, offsetY, offsetX, offsetY)
+
         isDrawing = true;
         [lastX, lastY] = [offsetX, offsetY]
     })
