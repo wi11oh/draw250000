@@ -1,0 +1,30 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #313338;
+    flex-direction: column;
+}
+
+html,body {
+    overflow: hidden;
+}
+
+.canvas-container {
+    border: 2px solid #000000;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    background-color: #313338;
+}
+
+#pen {
+    display: flex;
+    flex-direction: row;
+    padding-top: 15px;
+}
