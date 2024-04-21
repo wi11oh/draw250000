@@ -31,6 +31,8 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static("site"))
+app.set("view engine", "ejs")
+app.set("views", path.join(__dirname, "views"));
 
 
 
@@ -84,19 +86,19 @@ client.on("interactionCreate", async (message) => {
         quoteBase64[msgid] = imageb64
 
         sendmsg = await message.reply({
-            content: `10秒後に消えます¥n${apiBaseUrl}?quote=true&a=${a}&msgid=${msgid}`,
+            content: `15秒後に消えます\n${apiBaseUrl}?quote=true&a=${a}&msgid=${msgid}`,
             ephemeral: true,
         })
     } else if (message.customId === "newbtn") {
         sendmsg = await message.reply({
-            content: `10秒後に消えます¥n${apiBaseUrl}?a=${a}`,
+            content: `15秒後に消えます\n${apiBaseUrl}?a=${a}`,
             ephemeral: true
         })
     }
 
     setTimeout(() => {
         sendmsg.delete().catch(console.error)
-    }, 10000)
+    }, 15000)
 })
 
 async function getb642url(url) {
@@ -120,8 +122,6 @@ const allowCrossDomain = function (req, res, next) {
         "Access-Control-Allow-Headers",
         "Content-Type, Authorization, access_token"
     )
-
-    // intercept OPTIONS method
     if ("OPTIONS" === req.method) {
         res.send(200)
     } else {
@@ -132,7 +132,12 @@ app.use(allowCrossDomain)
 
 app.get("/", function (req, res) {
     // console.log(req.body)
-    res.sendFile("./site", "index.html")
+    res.render(
+        "index",
+        {
+            apiBaseUrl:`<script>window.apiBaseUrl = "${apiBaseUrl}"</script>`,
+        }
+    )
 })
 
 app.post("/submit", function (req, res) {

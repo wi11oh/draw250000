@@ -1,6 +1,3 @@
-window.apiBaseUrl = "https://d250000.w1loh.com"
-
-
 document.addEventListener("DOMContentLoaded", async () => {
     const canvas = document.querySelector("#drawingCanvas")
     const context = canvas.getContext("2d")

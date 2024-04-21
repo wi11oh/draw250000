@@ -14,6 +14,9 @@ document.querySelector("#submit").addEventListener("click", async (e) => {
     const b64 = submitCanpas.toDataURL()
     console.log(b64)
 
+    let a = "匿名"
+    if (!(document.querySelector("#anonym").checked)) a = urlParams.get("a")
+
     const r = await fetch(`${apiBaseUrl}/submit`, {
         method: "POST",
         headers: {
@@ -22,7 +25,7 @@ document.querySelector("#submit").addEventListener("click", async (e) => {
         body: JSON.stringify({
             image: b64,
             id: decodeURIComponent(urlParams.get("msgid")),
-            a: decodeURIComponent(urlParams.get("a"))
+            a: a
         })
     })
 
