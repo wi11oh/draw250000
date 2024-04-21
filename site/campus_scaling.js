@@ -1,4 +1,4 @@
-window.apiBaseUrl = "http://192.168.0.28:3000"
+window.apiBaseUrl = "https://d250000.w1loh.com"
 
 
 document.addEventListener("DOMContentLoaded", async () => {
