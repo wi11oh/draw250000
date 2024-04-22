@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
+    sessionStorage.clear()
+
     const canvas = document.querySelector("#drawingCanvas")
     const context = canvas.getContext("2d")
 
@@ -14,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
     canvas.addEventListener(isTouchDevice ? "touchstart" : "mousedown", (e) => {
+        if (!(sessionStorage.getItem("history"))) saveDraw()
         const { offsetX, offsetY } = sumaho_offset(e, canvas, isTouchDevice)
 
         color = document.querySelector("#color").value

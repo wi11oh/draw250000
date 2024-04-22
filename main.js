@@ -75,7 +75,6 @@ async function sendMessageToDiscord(author, image, id) {
 }
 
 client.on("interactionCreate", async (message) => {
-    let sendmsg
     const a = message.user.globalName
     const msgid = message.message.id
 
@@ -85,20 +84,24 @@ client.on("interactionCreate", async (message) => {
         const imageb64 = await getb642url(attachUrl)
         quoteBase64[msgid] = imageb64
 
-        sendmsg = await message.reply({
+        const sendmsg = await message.reply({
             content: `15秒後に消えます\n${apiBaseUrl}?quote=true&a=${a}&msgid=${msgid}`,
             ephemeral: true,
         })
+
+        setTimeout(() => {
+            sendmsg.delete().catch(console.error)
+        }, 15000)
     } else if (message.customId === "newbtn") {
-        sendmsg = await message.reply({
+        const sendmsg = await message.reply({
             content: `15秒後に消えます\n${apiBaseUrl}?a=${a}`,
             ephemeral: true
         })
-    }
 
-    setTimeout(() => {
-        sendmsg.delete().catch(console.error)
-    }, 15000)
+        setTimeout(() => {
+            sendmsg.delete().catch(console.error)
+        }, 15000)
+    }
 })
 
 async function getb642url(url) {
