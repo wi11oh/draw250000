@@ -22,6 +22,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         isDrawing = true;
         [lastX, lastY] = [offsetX, offsetY]
+
+        if (historyNum < history.length - 1) {
+            history.splice(historyNum + 1)
+        }
     })
 
     canvas.addEventListener(isTouchDevice ? "touchmove" : "mousemove", (e) => {
@@ -41,6 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     canvas.addEventListener(isTouchDevice ? "touchend" : "mouseup", () => {
         isDrawing = false;
+        saveDraw()
     })
 
     canvas.addEventListener(isTouchDevice ? "touchcancel" : "mouseleave", () => {
@@ -66,4 +71,38 @@ document.addEventListener("DOMContentLoaded", async () => {
         context.stroke()
         context.closePath()
     }
+
+
+    // UNDOで寸分前の過去を帳消す
+    let history = []
+    let historyNum = -1
+
+    function saveDraw() {
+        history.push(canvas.toDataURL())
+        historyNum = history.length - 1
+        sessionStorage.setItem("history", JSON.stringify(history))
+    }
+
+    function draw2history() {
+        context.clearRect(0, 0, canvas.width, canvas.height)
+        const img = new Image()
+        img.src = history[historyNum]
+        img.onload = () => {
+            context.drawImage(img, 0, 0)
+        }
+    }
+
+    document.querySelector("#undo").addEventListener("click", (e) => {
+        if (historyNum > 0) {
+            historyNum -= 1
+            draw2history()
+        }
+    })
+
+    document.querySelector("#redo").addEventListener("click", (e) => {
+        if (historyNum < history.length - 1 ) {
+            historyNum += 1
+            draw2history()
+        }
+    })
 })
