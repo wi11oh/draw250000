@@ -16,6 +16,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     let isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
     canvas.addEventListener(isTouchDevice ? "touchstart" : "mousedown", (e) => {
+        if (isTouchDevice && e.touches.length > 1) {
+            saveDraw()
+            isDrawing = false;
+            if (historyNum > 0) {
+                historyNum -= 1
+                draw2history()
+            }
+            return
+        }
+
         if (!(sessionStorage.getItem("history"))) saveDraw()
         const { offsetX, offsetY } = sumaho_offset(e, canvas, isTouchDevice)
 
@@ -103,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
 
     document.querySelector("#redo").addEventListener("click", (e) => {
-        if (historyNum < history.length - 1 ) {
+        if (historyNum < history.length - 1) {
             historyNum += 1
             draw2history()
         }
