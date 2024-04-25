@@ -118,4 +118,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             draw2history()
         }
     })
+
+    // インポート
+    document.querySelector("#up").addEventListener("change", (e) => {
+        if (!(sessionStorage.getItem("history"))) saveDraw()
+
+        const file = e.target.files[0]
+        if (!file) return
+
+        const reader = new FileReader()
+        reader.onload = (event) => {
+            const img = new Image()
+            img.onload = () => {
+                context.clearRect(0, 0, canvas.width, canvas.height)
+                context.drawImage(img, 0, 0, canvas.width, canvas.height)
+                saveDraw();
+            };
+            img.src = event.target.result
+        };
+        reader.readAsDataURL(file)
+    })
+
 })

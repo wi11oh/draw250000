@@ -28,7 +28,7 @@ const client = new Client({
 })
 
 const app = express()
-app.use(express.json())
+app.use(express.json({ extended: true, limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static("site"))
 app.set("view engine", "ejs")

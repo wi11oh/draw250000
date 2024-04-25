@@ -30,7 +30,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             savedImageData = context.getImageData(0, 0, canvas.width, canvas.height)
         }
 
-        const size = Math.min(window.innerWidth, window.innerHeight)
+        let penheight = 4
+        if (window.innerHeight < window.innerWidth) penheight += document.querySelector("#pen").clientHeight
+
+        const size = Math.min(window.innerWidth, window.innerHeight) - penheight
         canvas.width = size
         canvas.height = size
 

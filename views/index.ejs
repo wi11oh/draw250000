@@ -20,13 +20,21 @@
 
     <div id="pen">
         <input id="color" type="color" value="#FFFFFF">
-        <div style="padding: 0 10px;"></div>
+        <div style="padding: 0 5px;"></div>
         <input type="range" class="form-range" id="bolder" value="3" min="1" max="100">
-        <div style="padding: 0 10px;"></div>
-        <input type="checkbox" id="anonym">
-        <div style="padding: 0 10px;"></div>
+        <div style="padding: 0 5px;"></div>
+        <input type="file" id="up" accept="image/*" style="display: none;">
+        <button type="button" style="writing-mode: horizontal-tb;" id="up_btn">挿</button>
+        <script>
+            document.querySelector("#up_btn").addEventListener("click", () => {
+                document.querySelector("#up").click()
+            })
+        </script>
+        <div style="padding: 0 5px;"></div>
         <button type="button" style="writing-mode: horizontal-tb;" id="undo">◀</button>
         <button type="button" style="writing-mode: horizontal-tb;" id="redo">▶</button>
+        <div style="padding: 0 10px;"></div>
+        <input type="checkbox" id="anonym">
         <div style="padding: 0 10px;"></div>
         <button type="button" style="writing-mode: horizontal-tb;" id="submit">送</button>
     </div>
