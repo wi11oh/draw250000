@@ -1,5 +1,4 @@
 const express = require("express")
-
 const axios = require("axios")
 
 const { Client, GatewayIntentBits, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require("discord.js")
@@ -32,7 +31,7 @@ app.use(express.json({ extended: true, limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static("site"))
 app.set("view engine", "ejs")
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "views"))
 
 
 
@@ -142,7 +141,6 @@ const allowCrossDomain = function (req, res, next) {
 app.use(allowCrossDomain)
 
 app.get("/", function (req, res) {
-    // console.log(req.body)
     res.render(
         "index",
         {
