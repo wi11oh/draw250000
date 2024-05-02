@@ -42,7 +42,7 @@ client.on("ready", () => {
     console.log(`${client.user.tag} > ちっす。`)
 })
 
-async function sendMessageToDiscord(author, image, id) {
+async function sendMessageToDiscord(author, image, id, text) {
     const channel = await client.channels.fetch(channelId)
     if (!channel) return
     if (author == "null") author = "匿名"
@@ -57,17 +57,25 @@ async function sendMessageToDiscord(author, image, id) {
         .setStyle(ButtonStyle.Danger)
     const row = new ActionRowBuilder().addComponents(quotebtn, newbtn)
 
+    let sendmsg
+    if (text) {
+        sendmsg = `作者：${author}\n${text}`
+    } else {
+        sendmsg = `作者：${author}`
+    }
+
     if (id != "null") {
 
         const rpmessage = await channel.messages.fetch(id)
+
         rpmessage.reply({
-            content: `作者：${author}`,
+            content: sendmsg,
             files: [new AttachmentBuilder(image, { name: "image.png" })],
             components: [row],
         })
     } else {
         channel.send({
-            content: `作者：${author}`,
+            content: sendmsg,
             files: [new AttachmentBuilder(image, { name: "image.png" })],
             components: [row],
         })
@@ -138,7 +146,7 @@ app.get("/", function (req, res) {
     res.render(
         "index",
         {
-            apiBaseUrl:`<script>window.apiBaseUrl = "${apiBaseUrl}"</script>`,
+            apiBaseUrl: `<script>window.apiBaseUrl = "${apiBaseUrl}"</script>`,
         }
     )
 })
@@ -147,12 +155,13 @@ app.post("/submit", function (req, res) {
     const image_ = req.body.image
     const id = req.body.id
     const a = req.body.a
+    const text = req.body.text
     console.log(id, a)
 
     const image = Buffer.from(image_.replace(/^data:image\/\w+;base64,/, ''), "base64")
 
     if (image_) {
-        sendMessageToDiscord(a, image, id)
+        sendMessageToDiscord(a, image, id, text)
         res.status(200).send("OK")
     } else {
         res.status(400).send("ぅゎ〜〜〜〜〜〜〜〜〜")

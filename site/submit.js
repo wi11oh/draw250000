@@ -17,6 +17,9 @@ document.querySelector("#submit").addEventListener("click", async (e) => {
     let a = "匿名"
     if (!(document.querySelector("#anonym").checked)) a = urlParams.get("a")
 
+    let text = null
+    if (document.querySelector("#msgtext").value) text = document.querySelector("#msgtext").value
+
     const r = await fetch(`${apiBaseUrl}/submit`, {
         method: "POST",
         headers: {
@@ -25,7 +28,8 @@ document.querySelector("#submit").addEventListener("click", async (e) => {
         body: JSON.stringify({
             image: b64,
             id: decodeURIComponent(urlParams.get("msgid")),
-            a: a
+            a: a,
+            text: text
         })
     })
 

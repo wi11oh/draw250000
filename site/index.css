@@ -27,4 +27,5 @@ canvas {
     display: flex;
     flex-direction: row;
     padding-top: 5px;
+    padding-bottom: 5px;
 }
