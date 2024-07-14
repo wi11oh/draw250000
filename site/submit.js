@@ -17,6 +17,8 @@ document.querySelector("#submit").addEventListener("click", async (e) => {
     let a = "匿名"
     if (!(document.querySelector("#anonym").checked)) a = urlParams.get("a")
 
+    const isSpoiler = document.querySelector("#spoiler").checked
+
     let text = null
     if (document.querySelector("#msgtext").value) text = document.querySelector("#msgtext").value
 
@@ -29,7 +31,8 @@ document.querySelector("#submit").addEventListener("click", async (e) => {
             image: b64,
             id: decodeURIComponent(urlParams.get("msgid")),
             a: a,
-            text: text
+            text: text,
+            spoiler: isSpoiler
         })
     })
 

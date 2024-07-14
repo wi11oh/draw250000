@@ -1,7 +1,7 @@
 const express = require("express")
 const axios = require("axios")
 
-const { Client, GatewayIntentBits, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require("discord.js")
+const { Client, GatewayIntentBits, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, spoiler } = require("discord.js")
 
 const fs = require("fs")
 const path = require("path")
@@ -41,7 +41,7 @@ client.on("ready", () => {
     console.log(`${client.user.tag} > ちっす。`)
 })
 
-async function sendMessageToDiscord(author, image, id, text) {
+async function sendMessageToDiscord(author, image, id, text, isSpoiler) {
     const channel = await client.channels.fetch(channelId)
     if (!channel) return
     if (author == "null") author = "匿名"
@@ -63,19 +63,21 @@ async function sendMessageToDiscord(author, image, id, text) {
         sendmsg = `作者：${author}`
     }
 
+    const filename = isSpoiler ? "SPOILER_image.png" : "image.png"
+
     if (id != "null") {
 
         const rpmessage = await channel.messages.fetch(id)
 
         rpmessage.reply({
             content: sendmsg,
-            files: [new AttachmentBuilder(image, { name: "image.png" })],
+            files: [new AttachmentBuilder(image, { name: filename })],
             components: [row],
         })
     } else {
         channel.send({
             content: sendmsg,
-            files: [new AttachmentBuilder(image, { name: "image.png" })],
+            files: [new AttachmentBuilder(image, { name: filename })],
             components: [row],
         })
     }
@@ -154,12 +156,13 @@ app.post("/submit", function (req, res) {
     const id = req.body.id
     const a = req.body.a
     const text = req.body.text
+    const isSpoiler = req.body.spoiler
     console.log(id, a)
 
     const image = Buffer.from(image_.replace(/^data:image\/\w+;base64,/, ''), "base64")
 
     if (image_) {
-        sendMessageToDiscord(a, image, id, text)
+        sendMessageToDiscord(a, image, id, text, isSpoiler)
         res.status(200).send("OK")
     } else {
         res.status(400).send("ぅゎ〜〜〜〜〜〜〜〜〜")
