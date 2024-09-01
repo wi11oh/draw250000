@@ -18,7 +18,7 @@ document.querySelector("#submit").addEventListener("click", async (e) => {
     const authorName = ((wantAnonym, name) => {
       if (!wantAnonym) return name
 
-      if (Math.random() < 0.1) return name
+      if (Math.random() < 0.1) return name + "[匿名すり抜け発動]"
 
       return "匿名"
     })(document.querySelector("#anonym").checked, urlParams.get("a"))
