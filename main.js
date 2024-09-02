@@ -3,8 +3,8 @@ const axios = require("axios")
 
 const { Client, GatewayIntentBits, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, spoiler } = require("discord.js")
 
-const fs = require("fs")
 const path = require("path")
+const crypto = require("crypto")
 
 
 
@@ -16,7 +16,7 @@ const apiBaseUrl = process.env.APIBASEURL
 
 
 
-let quoteBase64 = {}
+let qualifications = []
 
 
 
@@ -41,7 +41,7 @@ client.on("ready", () => {
     console.log(`${client.user.tag} > ちっす。`)
 })
 
-async function sendMessageToDiscord(author, image, id, text, isSpoiler) {
+async function sendMessageToDiscord(author, image, uuid_, text, isSpoiler) {
     const channel = await client.channels.fetch(channelId)
     if (!channel) return
     if (author == "null") author = "匿名"
@@ -65,9 +65,11 @@ async function sendMessageToDiscord(author, image, id, text, isSpoiler) {
 
     const filename = isSpoiler ? "SPOILER_image.png" : "image.png"
 
-    if (id != "null") {
+    console.log(uuid_)
 
-        const rpmessage = await channel.messages.fetch(id)
+    if (qualifications.find(q => q.uuid == uuid_).base64img != null) {
+
+        const rpmessage = await channel.messages.fetch(qualifications.find(q => q.uuid == uuid_).msgid)
 
         rpmessage.reply({
             content: sendmsg,
@@ -89,12 +91,10 @@ client.on("interactionCreate", async (message) => {
 
     if (message.customId === "quote") {
         const attachUrl = message.message.attachments.first().url
-
-        const imageb64 = await getb642url(attachUrl)
-        quoteBase64[msgid] = imageb64
+        const uuid = setQualifications(a, msgid, await getb642url(attachUrl))
 
         const sendmsg = await message.reply({
-            content: `15秒後に消えます\n${apiBaseUrl}?quote=true&a=${a}&msgid=${msgid}`,
+            content: `15秒後に消えます\n${apiBaseUrl}?uuid=${uuid}&quote=true`,
             ephemeral: true,
         })
 
@@ -102,8 +102,10 @@ client.on("interactionCreate", async (message) => {
             sendmsg.delete().catch(console.error)
         }, 15000)
     } else if (message.customId === "newbtn") {
+        const uuid = setQualifications(a, msgid, null)
+
         const sendmsg = await message.reply({
-            content: `15秒後に消えます\n${apiBaseUrl}?a=${a}`,
+            content: `15秒後に消えます\n${apiBaseUrl}?uuid=${uuid}`,
             ephemeral: true
         })
 
@@ -119,6 +121,20 @@ async function getb642url(url) {
     })
 
     return Buffer.from(r.data, "binary").toString("base64")
+}
+
+function setQualifications(author, msgid, base64img) {
+    const uuid = crypto.randomUUID()
+
+    qualifications.push({
+        uuid: uuid,
+        author: author,
+        msgid: msgid,
+        base64img: base64img,
+        time: new Date
+    })
+
+    return uuid
 }
 
 client.login(discordToken)
@@ -151,28 +167,43 @@ app.get("/", function (req, res) {
     )
 })
 
-app.post("/submit", function (req, res) {
+app.post("/submit", (req, res) => {
     const image_ = req.body.image
-    const id = req.body.id
-    const a = req.body.a
+    const uuid = req.body.uuid
     const text = req.body.text
+    const isAnonym = req.body.anonym
     const isSpoiler = req.body.spoiler
-    console.log(id, a)
 
     const image = Buffer.from(image_.replace(/^data:image\/\w+;base64,/, ''), "base64")
 
+    const matchObj = qualifications.find(q => q.uuid == uuid)
+    let a = ""
+
+
+    if (isAnonym && matchObj) {
+        a = (Math.random() < 0.1) ? matchObj.author + "[匿名すり抜け発動]" : "匿名"
+    } else if (matchObj) {
+        a = matchObj.author
+    } else {
+        a = "session over"
+    }
+
+
     if (image_) {
-        sendMessageToDiscord(a, image, id, text, isSpoiler)
+        sendMessageToDiscord(a, image, uuid, text, isSpoiler)
         res.status(200).send("OK")
     } else {
         res.status(400).send("ぅゎ〜〜〜〜〜〜〜〜〜")
     }
 })
 
-app.get("/insert", (req, res) => {
-    res.send(quoteBase64[req.query.msgid])
-    // デバッグ後必ずコメントアウト！！！！！！！！！！！！
-    quoteBase64 = {}
+app.get("/inquiry", (req, res) => {
+
+    qualifications = qualifications.filter(o => {
+        return ((new Date - o.time) / 1000 / 60) <= 60
+    })
+
+    res.send(qualifications.find(q => q.uuid == req.query.uuid))
 })
 
 app.listen(3000, () => {

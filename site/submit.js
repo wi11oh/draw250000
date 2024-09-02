@@ -14,15 +14,7 @@ document.querySelector("#submit").addEventListener("click", async (e) => {
     const b64 = submitCanpas.toDataURL()
     console.log(b64)
 
-    // 匿名にチェックが入っている場合、90%の確率で作者を"匿名"にする
-    const authorName = ((wantAnonym, name) => {
-      if (!wantAnonym) return name
-
-      if (Math.random() < 0.1) return name + "[匿名すり抜け発動]"
-
-      return "匿名"
-    })(document.querySelector("#anonym").checked, urlParams.get("a"))
-
+    const isAnonym = document.querySelector("#anonym").checked
     const isSpoiler = document.querySelector("#spoiler").checked
 
     let text = null
@@ -35,9 +27,9 @@ document.querySelector("#submit").addEventListener("click", async (e) => {
         },
         body: JSON.stringify({
             image: b64,
-            id: decodeURIComponent(urlParams.get("msgid")),
-            a: authorName,
+            uuid: decodeURIComponent(urlParams.get("uuid")),
             text: text,
+            anonym: isAnonym,
             spoiler: isSpoiler
         })
     })

@@ -6,14 +6,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     const urlParams = new URLSearchParams(window.location.search)
     const quote = decodeURIComponent(urlParams.get("quote"))
     const msgid = decodeURIComponent(urlParams.get("msgid"))
+    const uuid = decodeURIComponent(urlParams.get("uuid"))
 
     async function getb64(url) {
         const request = await fetch(url)
-        return await request.text()
+        const r_json = await request.json()
+        return r_json.base64img
     }
 
     async function loadAndDrawImage() {
-        const b64Image = await getb64(`${apiBaseUrl}/insert?msgid=${msgid}`)
+        const b64Image = await getb64(`${apiBaseUrl}/inquiry?uuid=${uuid}`)
         const image = new Image()
         image.onload = () => {
             context.drawImage(image, 0, 0, 500, 500, 0, 0, canvas.width, canvas.height)
