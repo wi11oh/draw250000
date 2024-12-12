@@ -23,6 +23,18 @@ canvas {
     background-color: #313338;
 }
 
+#pointer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 100%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
 #pen {
     display: flex;
     flex-direction: row;

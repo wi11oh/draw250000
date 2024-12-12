@@ -13,7 +13,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     let color = "#FFFFFF"
     let bolder = 3
 
+    let isErasar = false
+
     let isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+    const pointer = document.querySelector("#pointer")
 
     canvas.addEventListener(isTouchDevice ? "touchstart" : "mousedown", (e) => {
         if (isTouchDevice && e.touches.length > 1) {
@@ -42,6 +46,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
 
     canvas.addEventListener(isTouchDevice ? "touchmove" : "mousemove", (e) => {
+        pointer.style.top = `${e.clientY}px`
+        pointer.style.left = `${e.clientX}px`
+        pointer.style.width = `${document.querySelector("#bolder").value}px`
+        pointer.style.height = `${document.querySelector("#bolder").value}px`
+        pointer.style.backgroundColor = document.querySelector("#color").value
+
         if (isDrawing) {
             color = document.querySelector("#color").value
             bolder = document.querySelector("#bolder").value
@@ -75,7 +85,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function drawLine(x1, y1, x2, y2) {
-        context.strokeStyle = color
+        context.strokeStyle = isErasar ? "rgba(0,0,0,1)" : color
+        context.globalCompositeOperation = isErasar ? "destination-out" : "source-over"
         context.lineWidth = bolder
         context.lineCap = "round"
         context.beginPath()
@@ -91,6 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let historyNum = -1
 
     function saveDraw() {
+        context.globalCompositeOperation = "source-over"
         history.push(canvas.toDataURL())
         historyNum = history.length - 1
         sessionStorage.setItem("history", JSON.stringify(history))
@@ -139,4 +151,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         reader.readAsDataURL(file)
     })
 
+
+    document.querySelector("#erasar").addEventListener("click", () => {
+        isErasar = !isErasar
+        const erasarButton = document.querySelector("#erasar")
+        erasarButton.classList.add(isErasar ? "btn-outline-secondary" : "btn-secondary")
+        erasarButton.classList.remove(isErasar ? "btn-secondary" : "btn-outline-secondary")
+    })
 })
